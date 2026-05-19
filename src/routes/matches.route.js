@@ -9,7 +9,7 @@ const MAX_LIMIT = 100
 matchRouter.get('/', async (req,res)=>{
     const parsed = listMatchesQuerySchema.safeParse(req.query)
     if(!parsed.success){
-        return res.status(400).json({error:"invalid payload", details: JSON.stringify(parsed.error)})
+        return res.status(400).json({error:"invalid query", details: parsed.error.issues})
     }
     const limit = Math.min(parsed.data.limit ?? 50, MAX_LIMIT)
     try{
@@ -19,10 +19,11 @@ matchRouter.get('/', async (req,res)=>{
     },
   take: limit
 });
-        res.status(201).json({message:"match fetched successfully", data: result})
+        res.status(200).json({message:"match fetched successfully", data: result})
     }catch(e){
-
-        return res.status(500).json({error: "Failed to fetch matches", details: JSON.stringify(e)})
+        console.error("Failed to fetch matches:", e)
+        return res.status(500).json({error: "Failed to fetch matches"})
+        
     }
     }
 )
@@ -30,12 +31,11 @@ matchRouter.get('/', async (req,res)=>{
 
 matchRouter.post('/create',async(req,res)=>{
     const parsed = createMatchSchema.safeParse(req.body)
-    const {data:{startTime, endTime, homeScore, awayScore}} = parsed
     
-
     if(!parsed.success){
-        return res.status(400).json({error:"invalid payload", details: JSON.stringify(parsed.error)})
+        return res.status(400).json({error:"invalid payload", details: parsed.error.issues})
     }
+    const { startTime, endTime, homeScore, awayScore } = parsed.data
     try{
         const event = await prisma.match.create({data:{
             ...parsed.data,
@@ -49,7 +49,8 @@ matchRouter.post('/create',async(req,res)=>{
         }})
         res.status(201).json({message:"match created successfully", data: event})
     }catch(e){
-        return res.status(500).json({error: "Failed to create Match", details: JSON.stringify(e)})
-    }
-})
+        console.error("Failed to create match:", e)
+        return res.status(500).json({error: "Failed to create match"})
+        
+}})
 export default matchRouter

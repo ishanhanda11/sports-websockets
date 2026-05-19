@@ -25,7 +25,7 @@ model Match {
   awayTeam   String        @map("away_team")
   status     MatchStatus   @default(scheduled) @map("status")
   startTime  DateTime      @map("start_time")
-  endTime    DateTime?     @map("end_time")
+  endTime    DateTime     @map("end_time")
   homeScore  Int           @default(0) @map("home_score")
   awayScore  Int           @default(0) @map("away_score")
   createdAt  DateTime      @default(now()) @map("created_at")
