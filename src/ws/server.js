@@ -44,10 +44,10 @@ export function attachWebSocketServer(server){
     wss.on('connection',async (socket,req)=>{
         if(wsArcjet){
             try{
-                const decision = await wsArcjet.project(req)
+                const decision = await wsArcjet.protect(req)
                 if(decision.isDenied()){
                     const code = decision.reason.isRateLimit()? 1013 : 1008
-                    const reason = decision.reason.isRateLimit() ? 'Rate limit Exeeded': 'Access denied'
+                    const reason = decision.reason.isRateLimit() ? 'Rate limit Exceeded': 'Access denied'
                     socket.close(code,reason)
                     return
                 }
