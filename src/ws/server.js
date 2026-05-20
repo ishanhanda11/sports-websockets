@@ -10,7 +10,11 @@ function broadCast (wss, payload){
     for (const client of wss.clients){
          if(client.readyState !== WebSocket.OPEN) continue;
 
-         client.send(JSON.stringify(payload));
+         try {
+             client.send(JSON.stringify(payload));
+         } catch (error) {
+             console.error("Failed to send message to client:", error)
+         }
     }
 }
 
