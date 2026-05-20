@@ -47,9 +47,14 @@ matchRouter.post('/create',async(req,res)=>{
 
 
         }})
-        if(res.app.locals.broadCastMatchCreated){ 
-         res.app.locals.broadCastMatchCreated(event) 
-}
+          
+       if (res.app.locals.broadCastMatchCreated) {
+           try {
+               res.app.locals.broadCastMatchCreated(event)
+           } catch (broadcastError) {
+               console.error("Failed to broadcast match_created:", broadcastError)
+           }
+       }
         res.status(201).json({message:"match created successfully", data: event})
     }catch(e){
         console.error("Failed to create match:", e)
