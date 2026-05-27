@@ -14,4 +14,5 @@ app.use('/matches/:id/commentary', commentaryRouter)
 const {broadCastMatchCreated, matchBroadcast} = attachWebSocketServer(server)
 
 app.locals.broadCastMatchCreated = broadCastMatchCreated;
+app.locals.matchBroadcast = matchBroadcast
 export default server

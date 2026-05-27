@@ -24,7 +24,10 @@ commentaryRouter.post("/", async (req, res) => {
         ...bodyParsed.data,
       },
     });
-
+     res.app.locals.matchBroadcast?.(paramsParsed.data.id, {
+     type: "commentary_created",
+     data: commentary,
+    });
     return res.status(201).json({ message: "commentary created successfully", data: commentary });
   } catch (error) {
     console.error("Failed to create commentary:", error);
