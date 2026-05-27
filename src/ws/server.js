@@ -1,6 +1,10 @@
 import WebSocket, { WebSocketServer } from "ws";
+<<<<<<< HEAD
 
 
+=======
+import { wsArcjet } from "../arcjet.js";
+>>>>>>> 9b2afa17b777dc93e96755018a4a086a8cb21338
 
 function sendJson (socket, payload){
     if(socket.readyState !== WebSocket.OPEN) return;
@@ -9,7 +13,10 @@ function sendJson (socket, payload){
 }
 
 function broadCast (wss, payload){
+<<<<<<< HEAD
    
+=======
+>>>>>>> 9b2afa17b777dc93e96755018a4a086a8cb21338
     for (const client of wss.clients){
          if(client.readyState !== WebSocket.OPEN) continue;
 
@@ -20,6 +27,7 @@ function broadCast (wss, payload){
          }
     }
 }
+<<<<<<< HEAD
 const matchSubscribers = new Map()
 const matchHistory = new Map()
 
@@ -138,19 +146,33 @@ function handleMessage (socket, data){
 export function attachWebSocketServer(server){
     const wss = new WebSocketServer({server, path:'/ws', maxPayload: 1024 * 1024 })
     
+=======
+
+export function attachWebSocketServer(server){
+    const wss = new WebSocketServer({server, path:'/ws', maxPayload: 1024 * 1024 })
+
+>>>>>>> 9b2afa17b777dc93e96755018a4a086a8cb21338
     const interval = setInterval(() => {
         wss.clients.forEach((socket) => {
 
             if(socket.isAlive === false){
+<<<<<<< HEAD
                 console.log(`terminating the dead connection with Id:${socket.clientId}, was subscribed to ${socket.subscriptions.size}: ${[...socket.subscriptions].join(', ')} `)
                 cleanupSubscribers(socket,'terminated (dead connection)')
+=======
+                console.log("terminating dead connection")
+>>>>>>> 9b2afa17b777dc93e96755018a4a086a8cb21338
                 socket.terminate()
                 return
             }
 
             socket.isAlive = false  
+<<<<<<< HEAD
             socket.ping()
             
+=======
+            socket.ping()          
+>>>>>>> 9b2afa17b777dc93e96755018a4a086a8cb21338
         })
     }, 30000)
 
@@ -160,6 +182,7 @@ export function attachWebSocketServer(server){
     })
 
     wss.on('connection',async (socket,req)=>{
+<<<<<<< HEAD
         const clientId = Date.now() + Math.random()
         const totalClients = wss.clients.size
         socket.messageCount = 0 // it is for setting only 5 messages per 10 seconds
@@ -178,14 +201,44 @@ export function attachWebSocketServer(server){
             cleanupSubscribers(socket)
     })
 })
+=======
+        if(wsArcjet){
+            try{
+                const decision = await wsArcjet.protect(req)
+                if(decision.isDenied()){
+                    const code = decision.reason.isRateLimit()? 1013 : 1008
+                    const reason = decision.reason.isRateLimit() ? 'Rate limit Exceeded': 'Access denied'
+                    socket.close(code,reason)
+                    return
+                }
+            }catch(e){
+                console.error('WS connection error',e)
+                socket.close(1011,'server security error')
+                return
+            }
+        }
+        socket.isAlive = true                           // mark alive on connect
+        socket.on('pong', () => { socket.isAlive = true }) // reset on pong reply
+
+        sendJson(socket, {type: 'welcome'})
+        socket.on('error', console.error)
+    })
+>>>>>>> 9b2afa17b777dc93e96755018a4a086a8cb21338
 
     function broadCastMatchCreated(match){
         broadCast(wss, {type:'match_created', data : match})
     }
 
+<<<<<<< HEAD
     return {broadCastMatchCreated, matchBroadcast}
 }
 
 
 
 
+=======
+    return {broadCastMatchCreated}
+}
+
+
+>>>>>>> 9b2afa17b777dc93e96755018a4a086a8cb21338
