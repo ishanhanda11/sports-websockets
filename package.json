@@ -24,8 +24,6 @@
   "devDependencies": {
     "@types/pg": "^8.20.0"
   }
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> 9b2afa17b777dc93e96755018a4a086a8cb21338
+
